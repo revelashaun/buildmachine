@@ -18,6 +18,7 @@ services:
                     - nexus-${ENV}.${DOMAIN}
                     - jenkins-${ENV}.${DOMAIN}
                     - seleniumhub-${ENV}.${DOMAIN}
+                    - stash-${ENV}.${DOMAIN}
         volumes:
             - "/var/run/docker.sock:/tmp/docker.sock:ro"
 
@@ -105,7 +106,34 @@ services:
             - "jenkinsvol:/var/jenkins_home"
             - "nexusvol:/sonatype-work"
             - "sonardbvol:/var/lib/postgresql/data"
+            - "stashvol:/var/atlassian/stash"
+            - "stashdbvol:/var/lib/postgresql/data"
+    stash:
+        image: cptactionhank/atlassian-stash:3.4.1
+        restart: "always"
+        networks:
+            - prodnetwork
+        environment:
+            - VIRTUAL_HOST=stash-${ENV}.${DOMAIN}
+            - VIRTUAL_PORT=7990
+        depends_on:
+            - stashdb
+        volumes:
+            - "stashvol:/var/atlassian/stash"
+        
+    stashdb:
+        image: postgres:9.3
+        networks:
+            - prodnetwork
+        environment:
+            - POSTGRES_USER=stash
+            - POSTGRES_PASSWORD=stash
+        volumes:
+            - "stashdbvol:/var/lib/postgresql/data"
+
 volumes:
       jenkinsvol: {}
       sonardbvol: {}
+      stashdbvol: {}
+      stashvol: {}
       nexusvol: {}
