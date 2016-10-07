@@ -23,7 +23,7 @@ Applying default settings
 =========================
 
 `````
-    . env-devel-local.sh
+   source ./env-devel-local.sh
 `````
 
 If you create a custom file you will need to apply that file instead of env-devel-local.sh before
